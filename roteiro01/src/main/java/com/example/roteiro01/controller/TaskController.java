@@ -12,33 +12,50 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import com.example.roteiro01.service.TaskService;
 @RestController
 public class TaskController {
+
     @Autowired
-    TaskRepository taskRepository;
+    private TaskService taskService;
+
+    // Injeta o serviço de tarefas no construtor
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
+    }
+
     @GetMapping("/task")
-        @Operation(summary = "Lista todas as tarefas da lista")
-    public ResponseEntity<List<Task>> listAll() {
-        List<Task> taskList = taskRepository.findAll();
+    public ResponseEntity<List<Task>> getAllTasks() {
+        List<Task> tasks = taskService.getAllTasks();
+        tasks.forEach(task -> {
+            // Verifica se completed é null antes de acessá-lo
+            if (task.getCompleted() == null) {
+                task.setCompleted(false); // Ou qualquer outro valor padrão que você queira atribuir
+            }
+            // Verifica se taskType é null antes de acessá-lo
+            if (task.isTaskTypeNull()) {
+                task.setTaskType(0); // Ou qualquer outro valor padrão que você queira atribuir
+            }
+        });
+        return new ResponseEntity<>(tasks, HttpStatus.OK);
+    }
+
+    @GetMapping("/gerenciar-tarefas")
+    @Operation(summary = "Gerencie as tarefas da lista")
+    public ResponseEntity<List<Task>> gerenciarTarefas() {
+        // Implemente a lógica para gerenciar tarefas no TaskService
+        List<Task> taskList = taskService.gerenciarTarefas();
         if (taskList.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(taskList);
     }
 
-    @GetMapping("/gerenciar-tarefas")
-    @Operation(summary = "Gerencie as tarefas da lista")
-    public ResponseEntity<List<Task>> GerenciarTarefas() {
-        List<Task> taskList = taskRepository.findAll();
-        if (taskList.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(taskList);
-    }
     @GetMapping("/concluir-tarefas")
     @Operation(summary = "Concluir tarefas da lista")
-    public ResponseEntity<List<Task>> ConcluirTarefa() {
-        List<Task> taskList = taskRepository.findAll();
+    public ResponseEntity<List<Task>> concluirTarefas() {
+        // Implemente a lógica para concluir tarefas no TaskService
+        List<Task> taskList = taskService.concluirTarefas();
         if (taskList.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -46,9 +63,10 @@ public class TaskController {
     }
 
     @GetMapping("/priorizar-tarefas")
-    @Operation(summary = "Priozar tarefas da lista")
-    public ResponseEntity<List<Task>> PriorizarTarefas() {
-        List<Task> taskList = taskRepository.findAll();
+    @Operation(summary = "Priorizar tarefas da lista")
+    public ResponseEntity<List<Task>> priorizarTarefas() {
+        // Implemente a lógica para priorizar tarefas no TaskService
+        List<Task> taskList = taskService.priorizarTarefas();
         if (taskList.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -57,11 +75,19 @@ public class TaskController {
 
     @GetMapping("/categorizar-tarefas")
     @Operation(summary = "Categorizar tarefas da lista")
-    public ResponseEntity<List<Task>> CategorizarTarefas() {
-        List<Task> taskList = taskRepository.findAll();
+    public ResponseEntity<List<Task>> categorizarTarefas() {
+        // Implemente a lógica para categorizar tarefas no TaskService
+        List<Task> taskList = taskService.categorizarTarefas();
         if (taskList.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(taskList);
     }
+
+    @PostMapping("/task")
+    public ResponseEntity<Task> createTask(@RequestBody Task task) {
+        Task createdTask = taskService.createTask(task);
+        return new ResponseEntity<>(createdTask, HttpStatus.CREATED);
+    }
+
 }
