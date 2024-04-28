@@ -19,7 +19,6 @@ public class TaskService {
     public Task createTask(Task task) {
         // Verifica se o tipo de tarefa está definido
         if (task.getTaskType() == null) {
-            // Define um valor padrão para o tipo de tarefa, se necessário
             task.setTaskType(TaskType.DATA.ordinal()); // Por exemplo, definindo como tipo "Data"
         }
         // Salva a tarefa no banco de dados
