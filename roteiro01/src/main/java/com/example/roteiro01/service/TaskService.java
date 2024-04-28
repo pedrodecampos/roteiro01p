@@ -6,7 +6,10 @@ import com.example.roteiro01.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
@@ -34,30 +37,30 @@ public class TaskService {
 
     // Métodos abaixo precisam ser implementados
     public List<Task> gerenciarTarefas() {
-        // Implementar a lógica para gerenciar tarefas
-        // Exemplo: listar todas as tarefas do banco de dados
         return taskRepository.findAll();
     }
 
-    public List<Task> concluirTarefas() {
-        // Implementar a lógica para concluir tarefas
-        // Exemplo: listar todas as tarefas concluídas do banco de dados
-        return taskRepository.findByCompleted(true);
+    public Task concluirTarefa(Long taskId) {
+        Optional<Task> optionalTask = taskRepository.findById(taskId);
+        if (optionalTask.isPresent()) {
+            Task task = optionalTask.get();
+            task.setCompleted(true); // Define a tarefa como concluída
+            return taskRepository.save(task); // Salva e retorna a tarefa atualizada
+        }
+        return null; // Retorna null se a tarefa não for encontrada
     }
 
     public List<Task> priorizarTarefas() {
-        // Implementar a lógica para priorizar tarefas
-        // Exemplo: listar todas as tarefas priorizadas do banco de dados
-        // Considere adicionar um campo na entidade Task para indicar a prioridade
-        // Exemplo: return taskRepository.findByPriority("high");
-        return taskRepository.findAll(); // Exemplo com lista completa (sem priorização)
+        return taskRepository.findAll().stream()
+                .filter(task -> task.getPriorityLevel() != null)
+                .sorted(Comparator.comparingInt(Task::getPriorityLevel).reversed())
+                .collect(Collectors.toList());
     }
 
     public List<Task> categorizarTarefas() {
-        // Implementar a lógica para categorizar tarefas
-        // Exemplo: listar todas as tarefas categorizadas do banco de dados
-        // Considere adicionar um campo na entidade Task para indicar a categoria
-        // Exemplo: return taskRepository.findByCategory("work");
-        return taskRepository.findAll(); // Exemplo com lista completa (sem categorização)
+        return taskRepository.findAll().stream()
+                .filter(task -> task.getCategory() != null)
+                .sorted(Comparator.comparing(Task::getCategory))
+                .collect(Collectors.toList());
     }
 }

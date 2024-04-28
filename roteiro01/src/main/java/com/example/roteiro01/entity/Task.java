@@ -82,4 +82,13 @@ public class Task {
         return "Task [id=" + id + ", description=" + description + ", completed=" +
                 completed + ", taskType=" + taskType + ", priorityLevel=" + priorityLevel + "]";
     }
+
+    private String category; // Novo campo para categoria
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
 }
