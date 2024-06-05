@@ -1,4 +1,4 @@
-package com.example.roteiro01;
+package com.example.roteiro01.integration;
 
 import com.example.roteiro01.entity.Task;
 import com.example.roteiro01.entity.TaskType;
