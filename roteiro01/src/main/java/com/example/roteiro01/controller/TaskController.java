@@ -57,7 +57,7 @@ public class TaskController {
     public ResponseEntity<List<Task>> concluirTarefas(@RequestParam Long taskId) {
         Task completedTask = taskService.concluirTarefa(taskId);
         if (completedTask == null) {
-            return ResponseEntity.notFound().build(); // Retorna 404 se a tarefa não for encontrada
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(Collections.singletonList(completedTask));
     }
