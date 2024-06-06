@@ -1,7 +1,14 @@
-# Etapa de build
-FROM maven:3.8.5-openjdk-11 AS build
+# Etapa 1: Build da aplicação
+FROM ubuntu:latest as build
 
-# Definir diretório de trabalho
+# Atualizar pacotes e instalar OpenJDK 11
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install -y openjdk-11-jdk
+
+# Instalar Maven
+RUN apt-get install -y maven
+
+# Definir o diretório de trabalho no contêiner
 WORKDIR /app
 
 # Copiar o arquivo pom.xml e a pasta src para o contêiner
@@ -11,7 +18,7 @@ COPY src ./src
 # Compilar o projeto e gerar o arquivo .jar
 RUN mvn clean package
 
-# Etapa de runtime
+# Etapa 2: Runtime
 FROM openjdk:11-jre-slim
 
 # Definir o diretório de trabalho no contêiner
