@@ -1,12 +1,27 @@
-FROM ubuntu:latest as build
-RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y openjdk-11-jdk
-COPY ./src /usr/src/app
-RUN apt-get install -y maven
-WORKDIR /usr/src/app
+# Etapa de build
+FROM maven:3.8.5-openjdk-11 AS build
+
+# Definir diretório de trabalho
+WORKDIR /app
+
+# Copiar o arquivo pom.xml e a pasta src para o contêiner
+COPY pom.xml .
+COPY src ./src
+
+# Compilar o projeto e gerar o arquivo .jar
 RUN mvn clean package
 
+# Etapa de runtime
 FROM openjdk:11-jre-slim
+
+# Definir o diretório de trabalho no contêiner
+WORKDIR /app
+
+# Expor a porta para acesso externo
 EXPOSE 8080
-COPY --from=build /usr/src/app/target/your-application.jar /usr/app/your-application.jar
-ENTRYPOINT ["java", "-jar", "/usr/app/your-application.jar"]
+
+# Copiar o arquivo .jar gerado na etapa de build
+COPY --from=build /app/target/*.jar /app/my-application.jar
+
+# Comando para executar o .jar
+ENTRYPOINT ["java", "-jar", "/app/my-application.jar"]
