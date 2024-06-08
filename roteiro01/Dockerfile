@@ -1,30 +1,24 @@
-# Definição da imagem com Ubuntu
-FROM ubuntu:latest as build
+# Etapa de build
+FROM maven:3.8.5-openjdk-11 AS build
 
-# Atualização do ambiente
-RUN apt-get update && apt-get upgrade -y
+# Definir diretório de trabalho
 
-# Instalação do OpenJDK
-RUN apt-get install -y openjdk-11-jdk
+# Copiar o arquivo pom.xml e a pasta src para o contêiner
+COPY .. .
 
-# Cópia do SRC para o container
-COPY ./src /usr/src/app
-
-# Instalação do Maven
-RUN apt-get install -y maven
-
-# Solicitação para gerar arquivo JAR
-WORKDIR /usr/src/app
+# Compilar o projeto e gerar o arquivo .jar
 RUN mvn clean package
 
-# Escolha da imagem que vai executar nossa aplicação
+# Etapa de runtime
 FROM openjdk:11-jre-slim
 
-# Exposição da porta 8080 para acesso externo
+# Definir o diretório de trabalho no contêiner
+
+# Expor a porta para acesso externo
 EXPOSE 8080
 
-# Cópia do .jar para execução
-COPY --from=build /usr/src/app/target/your-application.jar /usr/app/your-application.jar
+# Copiar o arquivo .jar gerado na etapa de build
+COPY --from=build /app/target/*.jar /app/my-application.jar
 
-# Execução do .jar pela máquina virtual Java
-ENTRYPOINT ["java", "-jar", "/usr/app/your-application.jar"]
+# Comando para executar o .jar
+ENTRYPOINT ["java", "-jar", "/app/my-application.jar"]
