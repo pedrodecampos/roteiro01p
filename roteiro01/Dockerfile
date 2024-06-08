@@ -20,7 +20,7 @@ FROM openjdk:21-jdk-slim
 EXPOSE 8080
 
 # Copiar o arquivo .jar gerado na etapa de build
-COPY --from=build /app/target/*.jar /app/my-application.jar
+COPY --from=build target/*.jar my-application.jar
 
 # Comando para executar o .jar
-ENTRYPOINT ["java", "-jar", "/app/my-application.jar"]
+ENTRYPOINT ["java", "-jar", "my-application.jar"]
