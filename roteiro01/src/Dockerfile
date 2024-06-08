@@ -15,7 +15,7 @@ RUN mvn clean package
 FROM openjdk:11-jre-slim
 
 # Definir o diretório de trabalho no contêiner
-WORKDIR /app
+
 
 # Expor a porta para acesso externo
 EXPOSE 8080
