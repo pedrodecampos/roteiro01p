@@ -1,13 +1,15 @@
 # Etapa de build
-FROM maven:3.8.5-openjdk-21 AS build
+FROM ubuntu:lastest AS build
 
-# Definir diretório de trabalho
-
-# Copiar o arquivo pom.xml e a pasta src para o contêiner
+RUN apt-get update
+RUN apt-get install openjdk-21-jdk -y
 COPY .. .
 
-# Compilar o projeto e gerar o arquivo .jar
-RUN mvn clean package
+
+RUN apt-get install maven -y
+RUN mvn clean install
+
+
 
 # Etapa de runtime
 FROM openjdk:21-jre-slim
