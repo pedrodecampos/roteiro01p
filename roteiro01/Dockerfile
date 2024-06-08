@@ -1,5 +1,5 @@
 # Etapa de build
-FROM maven:3.8.5-openjdk-11 AS build
+FROM maven:3.8.5-openjdk-21 AS build
 
 # Definir diretório de trabalho
 
@@ -10,7 +10,7 @@ COPY .. .
 RUN mvn clean package
 
 # Etapa de runtime
-FROM openjdk:11-jre-slim
+FROM openjdk:21-jre-slim
 
 # Definir o diretório de trabalho no contêiner
 
