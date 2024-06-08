@@ -2,11 +2,9 @@
 FROM maven:3.8.5-openjdk-11 AS build
 
 # Definir diretório de trabalho
-WORKDIR /app
 
 # Copiar o arquivo pom.xml e a pasta src para o contêiner
-COPY pom.xml .
-COPY src ./src
+COPY . .
 
 # Compilar o projeto e gerar o arquivo .jar
 RUN mvn clean package
@@ -15,7 +13,6 @@ RUN mvn clean package
 FROM openjdk:11-jre-slim
 
 # Definir o diretório de trabalho no contêiner
-WORKDIR /app
 
 # Expor a porta para acesso externo
 EXPOSE 8080
