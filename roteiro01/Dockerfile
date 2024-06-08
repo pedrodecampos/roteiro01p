@@ -12,7 +12,7 @@ RUN mvn clean install
 
 
 # Etapa de runtime
-FROM openjdk:21-jre-slim
+FROM openjdk:21-jdk-slim
 
 # Definir o diretório de trabalho no contêiner
 
