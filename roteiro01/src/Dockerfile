@@ -20,8 +20,7 @@ WORKDIR /app
 # Expor a porta para acesso externo
 EXPOSE 8080
 
-# Copiar o arquivo .jar gerado na etapa de build
-COPY --from=build /app/target/*.jar /app/my-application.jar
+COPY --from=build target/roteiro01-0.0.1-SNAPSHOT.jar app.jar
 
-# Comando para executar o .jar
-ENTRYPOINT ["java", "-jar", "/app/my-application.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
+
