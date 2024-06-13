@@ -1,0 +1,115 @@
+@startuml
+actor User
+participant TaskController
+participant TaskService
+participant TaskRepository
+entity Task
+
+' Create Task
+User -> TaskController: POST /task
+activate TaskController
+TaskController -> TaskService: createTask(task)
+activate TaskService
+TaskService -> Task: getTaskType()
+alt TaskType is null
+    TaskService -> Task: setTaskType(0)
+end
+TaskService -> TaskRepository: save(task)
+TaskRepository --> TaskService: Task
+TaskService --> TaskController: Task
+TaskController --> User: 201 Created
+deactivate TaskService
+deactivate TaskController
+
+' Get All Tasks
+User -> TaskController: GET /task
+activate TaskController
+TaskController -> TaskService: getAllTasks()
+activate TaskService
+TaskService -> TaskRepository: findAll()
+TaskRepository --> TaskService: List<Task>
+TaskService --> TaskController: List<Task>
+TaskController -> Task: getCompleted() [foreach Task]
+alt Completed is null
+    TaskController -> Task: setCompleted(false)
+end
+TaskController -> Task: isTaskTypeNull() [foreach Task]
+alt TaskType is null
+    TaskController -> Task: setTaskType(0)
+end
+TaskController --> User: 200 OK (List<Task>)
+deactivate TaskService
+deactivate TaskController
+
+' Manage Tasks
+User -> TaskController: GET /gerenciar-tarefas
+activate TaskController
+TaskController -> TaskService: gerenciarTarefas()
+activate TaskService
+TaskService -> TaskRepository: findAll()
+TaskRepository --> TaskService: List<Task>
+TaskService --> TaskController: List<Task>
+alt Task list is empty
+    TaskController --> User: 204 No Content
+else
+    TaskController --> User: 200 OK (List<Task>)
+end
+deactivate TaskService
+deactivate TaskController
+
+' Complete Task
+User -> TaskController: GET /concluir-tarefas?taskId={id}
+activate TaskController
+TaskController -> TaskService: concluirTarefa(taskId)
+activate TaskService
+TaskService -> TaskRepository: findById(taskId)
+TaskRepository --> TaskService: Optional<Task>
+alt Task found
+    TaskService -> Task: setCompleted(true)
+    TaskService -> TaskRepository: save(task)
+    TaskRepository --> TaskService: Task
+    TaskService --> TaskController: Task
+    TaskController --> User: 200 OK (Task)
+else Task not found
+    TaskService --> TaskController: null
+    TaskController --> User: 404 Not Found
+end
+deactivate TaskService
+deactivate TaskController
+
+' Prioritize Tasks
+User -> TaskController: GET /priorizar-tarefas
+activate TaskController
+TaskController -> TaskService: priorizarTarefas()
+activate TaskService
+TaskService -> TaskRepository: findAll()
+TaskRepository --> TaskService: List<Task>
+TaskService -> Task: getPriorityLevel() [foreach Task]
+TaskService -> Task: getPriorityLevel() [sort by priority descending]
+TaskService --> TaskController: List<Task>
+alt Task list is empty
+    TaskController --> User: 204 No Content
+else
+    TaskController --> User: 200 OK (List<Task>)
+end
+deactivate TaskService
+deactivate TaskController
+
+' Categorize Tasks
+User -> TaskController: GET /categorizar-tarefas
+activate TaskController
+TaskController -> TaskService: categorizarTarefas()
+activate TaskService
+TaskService -> TaskRepository: findAll()
+TaskRepository --> TaskService: List<Task>
+TaskService -> Task: getCategory() [foreach Task]
+TaskService -> Task: getCategory() [sort by category]
+TaskService --> TaskController: List<Task>
+alt Task list is empty
+    TaskController --> User: 204 No Content
+else
+    TaskController --> User: 200 OK (List<Task>)
+end
+deactivate TaskService
+deactivate TaskController
+@enduml

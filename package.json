@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "node": "^20.14.0"
+    "react-scripts": "^5.0.1"
   }
 }

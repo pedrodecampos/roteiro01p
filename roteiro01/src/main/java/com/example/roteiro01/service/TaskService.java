@@ -62,4 +62,28 @@ public class TaskService {
                 .sorted(Comparator.comparing(Task::getCategory))
                 .collect(Collectors.toList());
     }
+
+    public Task updateTask(Long taskId, Task taskDetails) {
+        Optional<Task> optionalTask = taskRepository.findById(taskId);
+        if (optionalTask.isPresent()) {
+            Task existingTask = optionalTask.get();
+            existingTask.setName(taskDetails.getName());
+            existingTask.setDescription(taskDetails.getDescription());
+            existingTask.setTaskType(taskDetails.getTaskType());
+            existingTask.setPriorityLevel(taskDetails.getPriorityLevel());
+            existingTask.setCategory(taskDetails.getCategory());
+            existingTask.setCompleted(taskDetails.getCompleted());
+            return taskRepository.save(existingTask);
+        }
+        return null; // Retorna null se a tarefa não for encontrada
+    }
+
+
+    public boolean deleteTask(Long taskId) {
+        if (taskRepository.existsById(taskId)) {
+            taskRepository.deleteById(taskId);
+            return true;
+        }
+        return false; // Retorna false se a tarefa não for encontrada
+    }
 }
