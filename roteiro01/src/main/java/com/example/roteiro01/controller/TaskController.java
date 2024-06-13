@@ -1,20 +1,18 @@
 package com.example.roteiro01.controller;
+
 import com.example.roteiro01.entity.Task;
-import com.example.roteiro01.repository.TaskRepository;
+import com.example.roteiro01.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.ArrayList;
+
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import com.example.roteiro01.service.TaskService;
+
 @RestController
+@RequestMapping("/tasks")
 public class TaskController {
 
     @Autowired
@@ -25,26 +23,47 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @GetMapping("/task")
+    @GetMapping
     public ResponseEntity<List<Task>> getAllTasks() {
         List<Task> tasks = taskService.getAllTasks();
         tasks.forEach(task -> {
-            // Verifica se completed é null antes de acessá-lo
             if (task.getCompleted() == null) {
-                task.setCompleted(false); // Ou qualquer outro valor padrão que você queira atribuir
+                task.setCompleted(false);
             }
-            // Verifica se taskType é null antes de acessá-lo
             if (task.isTaskTypeNull()) {
-                task.setTaskType(0); // Ou qualquer outro valor padrão que você queira atribuir
+                task.setTaskType(0);
             }
         });
         return new ResponseEntity<>(tasks, HttpStatus.OK);
     }
 
-    @GetMapping("/gerenciar-tarefas")
+    @PostMapping
+    public ResponseEntity<Task> createTask(@RequestBody Task task) {
+        Task createdTask = taskService.createTask(task);
+        return new ResponseEntity<>(createdTask, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task taskDetails) {
+        Task updatedTask = taskService.updateTask(id, taskDetails);
+        if (updatedTask == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedTask);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+        boolean isRemoved = taskService.deleteTask(id);
+        if (!isRemoved) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/manage")
     @Operation(summary = "Gerencie as tarefas da lista")
     public ResponseEntity<List<Task>> gerenciarTarefas() {
-        // Implemente a lógica para gerenciar tarefas no TaskService
         List<Task> taskList = taskService.gerenciarTarefas();
         if (taskList.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -52,21 +71,19 @@ public class TaskController {
         return ResponseEntity.ok(taskList);
     }
 
-    @GetMapping("/concluir-tarefas")
+    @PutMapping("/complete")
     @Operation(summary = "Concluir tarefas da lista")
-    public ResponseEntity<List<Task>> concluirTarefas(@RequestParam Long taskId) {
+    public ResponseEntity<Task> concluirTarefas(@RequestParam Long taskId) {
         Task completedTask = taskService.concluirTarefa(taskId);
         if (completedTask == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(Collections.singletonList(completedTask));
+        return ResponseEntity.ok(completedTask);
     }
 
-
-    @GetMapping("/priorizar-tarefas")
+    @GetMapping("/prioritize")
     @Operation(summary = "Priorizar tarefas da lista")
     public ResponseEntity<List<Task>> priorizarTarefas() {
-        // Implemente a lógica para priorizar tarefas no TaskService
         List<Task> taskList = taskService.priorizarTarefas();
         if (taskList.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -74,21 +91,13 @@ public class TaskController {
         return ResponseEntity.ok(taskList);
     }
 
-    @GetMapping("/categorizar-tarefas")
+    @GetMapping("/categorize")
     @Operation(summary = "Categorizar tarefas da lista")
     public ResponseEntity<List<Task>> categorizarTarefas() {
-        // Implemente a lógica para categorizar tarefas no TaskService
         List<Task> taskList = taskService.categorizarTarefas();
         if (taskList.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(taskList);
     }
-
-    @PostMapping("/task")
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
-        Task createdTask = taskService.createTask(task);
-        return new ResponseEntity<>(createdTask, HttpStatus.CREATED);
-    }
-
 }

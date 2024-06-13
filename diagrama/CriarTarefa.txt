@@ -1,0 +1,23 @@
+@startuml
+actor User
+participant TaskController
+participant TaskService
+participant TaskRepository
+entity Task
+entity TaskType
+
+User -> TaskController: POST /task
+activate TaskController
+TaskController -> TaskService: createTask(task)
+activate TaskService
+TaskService -> Task: getTaskType()
+alt TaskType is null
+    TaskService -> Task: setTaskType(TaskType.DATA.ordinal())
+end
+TaskService -> TaskRepository: save(task)
+TaskRepository --> TaskService: Task
+TaskService --> TaskController: Task
+TaskController --> User: 201 Created
+deactivate TaskService
+deactivate TaskController
+@enduml

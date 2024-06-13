@@ -1,0 +1,55 @@
+@startuml
+actor User
+participant TaskService
+participant TaskRepository
+entity Task
+entity TaskType
+
+User -> TaskService: createTask(Task)
+activate TaskService
+TaskService -> Task: getTaskType()
+alt TaskType is null
+    TaskService -> Task: setTaskType(TaskType.DATA.ordinal())
+end
+TaskService -> TaskRepository: save(Task)
+TaskRepository --> TaskService: Task
+deactivate TaskService
+
+User -> TaskService: getTaskById(taskId)
+activate TaskService
+TaskService -> TaskRepository: findById(taskId)
+TaskRepository --> TaskService: Optional<Task>
+TaskService --> User: Task or null
+deactivate TaskService
+
+User -> TaskService: concluirTarefa(taskId)
+activate TaskService
+TaskService -> TaskRepository: findById(taskId)
+TaskRepository --> TaskService: Optional<Task>
+alt Task found
+    TaskService -> Task: setCompleted(true)
+    TaskService -> TaskRepository: save(Task)
+    TaskRepository --> TaskService: Task
+else Task not found
+    TaskService --> User: null
+end
+deactivate TaskService
+
+User -> TaskService: priorizarTarefas()
+activate TaskService
+TaskService -> TaskRepository: findAll()
+TaskRepository --> TaskService: List<Task>
+TaskService -> Task: getPriorityLevel() [foreach Task]
+TaskService -> Task: getPriorityLevel() [sort by priority descending]
+TaskService --> User: List<Task>
+deactivate TaskService
+
+User -> TaskService: categorizarTarefas()
+activate TaskService
+TaskService -> TaskRepository: findAll()
+TaskRepository --> TaskService: List<Task>
+TaskService -> Task: getCategory() [foreach Task]
+TaskService -> Task: getCategory() [sort by category]
+TaskService --> User: List<Task>
+deactivate TaskService
+@enduml

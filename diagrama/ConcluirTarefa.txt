@@ -1,0 +1,26 @@
+@startuml
+actor User
+participant TaskController
+participant TaskService
+participant TaskRepository
+entity Task
+
+User -> TaskController: GET /concluir-tarefas?taskId={id}
+activate TaskController
+TaskController -> TaskService: concluirTarefa(taskId)
+activate TaskService
+TaskService -> TaskRepository: findById(taskId)
+TaskRepository --> TaskService: Optional<Task>
+alt Task found
+    TaskService -> Task: setCompleted(true)
+    TaskService -> TaskRepository: save(task)
+    TaskRepository --> TaskService: Task
+    TaskService --> TaskController: Task
+    TaskController --> User: 200 OK (Task)
+else Task not found
+    TaskService --> TaskController: null
+    TaskController --> User: 404 Not Found
+end
+deactivate TaskService
+deactivate TaskController
+@enduml
