@@ -27,6 +27,7 @@ public class Task {
 
     @Schema(name = "Descrição da tarefa deve possuir pelo menos 10 caracteres")
     @Size(min = 10, message = "Descrição da tarefa deve possuir pelo menos 10 caracteres")
+    @Column(nullable = false)
     private String description;
 
     private Boolean completed;
@@ -45,6 +46,9 @@ public class Task {
     private Integer priorityLevel;
 
     private String category; // Novo campo para categoria
+
+    public Task(Object o, String newTask, String newDescription) {
+    }
 
     // Métodos auxiliares
     public Integer getTaskType() {

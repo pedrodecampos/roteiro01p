@@ -1,0 +1,39 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f0f0f0; /* Cor de fundo suave */
+  color: #333; /* Cor principal de texto */
+  display: flex; /* Utiliza flexbox para layout */
+  justify-content: center; /* Centraliza horizontalmente */
+  align-items: center; /* Centraliza verticalmente */
+  height: 100vh; /* Altura total da viewport */
+}
+
+form {
+  background-color: #fff; /* Fundo branco para o formulário */
+  padding: 20px;
+  border-radius: 8px; /* Cantos arredondados */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  width: 300px; /* Largura do formulário */
+}
+
+input[type="text"], button {
+  width: calc(100% - 16px); /* Largura total menos o padding */
+  margin-bottom: 10px; /* Espaçamento inferior entre elementos */
+}
+
+button {
+  background-color: #007bff; /* Cor de fundo azul */
+  color: #fff; /* Cor do texto branco */
+  border: none; /* Sem borda */
+  cursor: pointer; /* Cursor de ponteiro ao passar o mouse */
+  padding: 10px 0; /* Espaçamento interno */
+  font-size: 1em; /* Tamanho de fonte */
+  border-radius: 4px; /* Cantos arredondados */
+}
+
+button:hover {
+  background-color: #0056b3; /* Cor de fundo mais escura ao passar o mouse */
+}
