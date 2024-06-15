@@ -14,5 +14,17 @@ export const createTask = async (task) => {
         throw error;
     }
 };
+export const getTasks = async () => {
+    const response = await api.get('/tasks');
+    return response.data;
+};
 
+export const updateTask = async (id, updatedTask) => {
+    const response = await api.put(`/tasks/${id}`, updatedTask);
+    return response.data;
+};
+
+export const deleteTask = async (id) => {
+    await api.delete(`/tasks/${id}`);
+};
 export default api;
